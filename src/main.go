@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"os"
+	"sync"
 
 	"gopkg.in/yaml.v2"
 )
@@ -15,9 +16,14 @@ type Config struct {
 	Direct     bool   `yaml:"direct"`
 }
 
-var proxyConfig Config
+var (
+	proxyConfig Config
+	configLock  = new(sync.RWMutex)
+)
 
 func LoadConfig(path string) {
+	configLock.Lock()
+	defer configLock.Unlock()
 	f, err := os.Open(path)
 	if err != nil {
 		log.Fatalf("无法打开配置文件: %v", err)
@@ -27,9 +33,12 @@ func LoadConfig(path string) {
 	if err := decoder.Decode(&proxyConfig); err != nil {
 		log.Fatalf("解析配置文件失败: %v", err)
 	}
+	log.Println("配置已重新加载")
 }
 
 func GetUpstreamProxy() string {
+	configLock.RLock()
+	defer configLock.RUnlock()
 	if proxyConfig.Direct {
 		return ""
 	}
