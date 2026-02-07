@@ -26,23 +26,19 @@ func LoadConfig(path string) {
 	defer configLock.Unlock()
 	f, err := os.Open(path)
 	if err != nil {
-		slog.Error("无法打开配置文件: %v", err)
+		slog.Error("无法打开配置文件", "error", err)
 	}
 	defer f.Close()
 	decoder := yaml.NewDecoder(f)
 	if err := decoder.Decode(&proxyConfig); err != nil {
-		slog.Error("解析配置文件失败: %v", err)
+		slog.Error("解析配置文件失败", "error", err)
 	}
 
-	slog.Info(
-		"配置已重新加载, 运行在%s模式",
-		func() string {
-			if proxyConfig.Direct {
-				return "直连"
-			}
-			return "代理"
-		}(),
-	)
+    mode := "代理"
+    if proxyConfig.Direct {
+        mode = "直连"
+    }
+    slog.Info("配置已重新加载, 运行在" + mode + "模式")
 }
 
 func GetUpstreamProxy() string {

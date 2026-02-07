@@ -10,7 +10,7 @@ import (
 func watchConfig(path string) {
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
-		slog.Error("创建文件监视器失败: %v", err)
+		slog.Error("创建文件监视器失败", "error", err)
 	}
 	defer watcher.Close()
 
@@ -22,21 +22,21 @@ func watchConfig(path string) {
 					return
 				}
 				if event.Op&fsnotify.Write == fsnotify.Write {
-					slog.Warn("检测到配置文件修改: %s", event.Name)
+					slog.Warn("检测到配置文件修改", "file", event.Name)
 					LoadConfig(path)
 				}
 			case err, ok := <-watcher.Errors:
 				if !ok {
 					return
 				}
-				slog.Error("文件监视器错误: %v", err)
+				slog.Error("文件监视器错误", "error", err)
 			}
 		}
 	}()
 
 	err = watcher.Add(path)
 	if err != nil {
-		slog.Error("添加文件到监视器失败: %v", err)
+		slog.Error("添加文件到监视器失败", "path", path, "error", err)
 	}
 }
 
@@ -59,7 +59,10 @@ func main() {
 	if proxyConfig.Direct {
 		slog.Info("运行在直连模式")
 	} else {
-		slog.Info("代理服务已启动在 %s，上游代理: %s", addr, GetUpstreamProxy())
+		slog.Info("代理服务已启动在 %s，上游代理: %s", "addr", addr, "upstream", GetUpstreamProxy())
 	}
-	slog.Error(server.ListenAndServe())
+	err := server.ListenAndServe()
+	if err != nil && err != http.ErrServerClosed {
+		slog.Error("代理服务启动失败", "error", err)
+	}
 }
