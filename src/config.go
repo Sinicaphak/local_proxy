@@ -18,6 +18,10 @@ func main() {
 			}
 		}),
 	}
-	log.Printf("代理服务已启动在 %s，上游代理: %s", addr, GetUpstreamProxy())
+	if proxyConfig.Direct {
+		log.Println("运行在直连模式")
+	} else {
+		log.Printf("代理服务已启动在 %s，上游代理: %s", addr, GetUpstreamProxy())
+	}
 	log.Fatal(server.ListenAndServe())
 }
