@@ -8,13 +8,20 @@ import (
 )
 
 func watchConfig(path string) {
-	watcher, err := fsnotify.NewWatcher()
-	if err != nil {
-		slog.Error("创建文件监视器失败", "error", err)
-	}
-	defer watcher.Close()
-
 	go func() {
+		watcher, err := fsnotify.NewWatcher()
+		if err != nil {
+			slog.Error("创建文件监视器失败", "error", err)
+			return
+		}
+		defer watcher.Close()
+
+		err = watcher.Add(path)
+		if err != nil {
+			slog.Error("添加文件到监视器失败", "path", path, "error", err)
+			return
+		}
+
 		for {
 			select {
 			case event, ok := <-watcher.Events:
@@ -33,11 +40,6 @@ func watchConfig(path string) {
 			}
 		}
 	}()
-
-	err = watcher.Add(path)
-	if err != nil {
-		slog.Error("添加文件到监视器失败", "path", path, "error", err)
-	}
 }
 
 func main() {
