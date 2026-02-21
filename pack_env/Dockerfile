@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y \
     git \
     wget \
     ca-certificates \
+    sudo \
     && rm -rf /var/lib/apt/lists/*
 
 # go >= 1.21 
