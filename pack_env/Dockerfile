@@ -19,7 +19,7 @@ RUN wget https://go.dev/dl/go1.25.7.linux-amd64.tar.gz && \
     rm go1.25.7.linux-amd64.tar.gz
 
 ENV PATH="/usr/local/go/bin:${PATH}"
-ENV GOPATH="/go"
+ENV GOPATH="/home/tester/go"
 
 RUN useradd -m -s /bin/bash tester && \
     usermod -aG sudo tester && \
