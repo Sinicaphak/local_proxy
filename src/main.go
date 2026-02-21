@@ -1,11 +1,10 @@
 package main
 
 import (
+	"flag"
 	"log/slog"
-	"os"
+	"net/http"
 	"sync"
-
-	"gopkg.in/yaml.v2"
 )
 
 type Config struct {
@@ -21,31 +20,30 @@ var (
 	configLock  = new(sync.RWMutex)
 )
 
-func LoadConfig(path string) {
-	configLock.Lock()
-	defer configLock.Unlock()
-	f, err := os.Open(path)
-	if err != nil {
-		slog.Error("无法打开配置文件", "error", err)
-	}
-	defer f.Close()
-	decoder := yaml.NewDecoder(f)
-	if err := decoder.Decode(&proxyConfig); err != nil {
-		slog.Error("解析配置文件失败", "error", err)
-	}
+func main() {
+	configPath := flag.String("config", "/etc/local-proxy/config.yaml", "配置文件路径")
+	flag.Parse()
+	LoadConfig(*configPath)
+	watchConfig(*configPath) // 启动文件监视
 
-    mode := "代理"
-    if proxyConfig.Direct {
-        mode = "直连"
-    }
-    slog.Info("配置已重新加载, 运行在" + mode + "模式")
-}
-
-func GetUpstreamProxy() string {
-	configLock.RLock()
-	defer configLock.RUnlock()
+	addr := proxyConfig.SelfIP + ":" + proxyConfig.SelfPort
+	server := &http.Server{
+		Addr: addr,
+		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if r.Method == http.MethodConnect {
+				HandleTunneling(w, r)
+			} else {
+				HandleHTTP(w, r)
+			}
+		}),
+	}
 	if proxyConfig.Direct {
-		return ""
+		slog.Info("运行在直连模式")
+	} else {
+		slog.Info("代理服务已启动在 %s，上游代理: %s", "addr", addr, "upstream", GetUpstreamProxy())
 	}
-	return "http://" + proxyConfig.TargetIP + ":" + proxyConfig.TargetPort
+	err := server.ListenAndServe()
+	if err != nil && err != http.ErrServerClosed {
+		slog.Error("代理服务启动失败", "error", err)
+	}
 }

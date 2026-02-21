@@ -7,6 +7,15 @@ import (
 	"net/url"
 )
 
+func GetUpstreamProxy() string {
+	configLock.RLock()
+	defer configLock.RUnlock()
+	if proxyConfig.Direct {
+		return ""
+	}
+	return "http://" + proxyConfig.TargetIP + ":" + proxyConfig.TargetPort
+}
+
 func HandleTunneling(w http.ResponseWriter, r *http.Request) {
 	var destConn net.Conn
 	var err error
