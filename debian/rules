@@ -9,7 +9,7 @@ export GO111MODULE=on
 
 override_dh_auto_build:
 	mkdir -p bin
-	GOFLAGS="${GOFLAGS}" go build -trimpath -o bin/local-proxy ./src
+	GOFLAGS="" go build -trimpath -o bin/local-proxy ./cmd/local_proxy
 
 override_dh_auto_install:
 	dh_auto_install --destdir=$(CURDIR)/debian/local-proxy
