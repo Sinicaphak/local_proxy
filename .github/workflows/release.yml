@@ -1,8 +1,13 @@
 name: Build Pack, and Release
 
 on:
-  # push:
-  #   tags:
-  #     - "v*"
+  push:
+    tags:
+      - "v*"
+    paths:
+      - 'internal/proxy/**'
+      - 'cmd/local_proxy/**'
+      - 'debian/**'
+      - 'script/**'
 
 
