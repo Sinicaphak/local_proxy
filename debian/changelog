@@ -1,12 +1,15 @@
-local-proxy (0.1.5-1) UNRELEASED; urgency=medium
+local-proxy (0.1.8-1) UNRELEASED; urgency=medium
 
   * 修复脚本权限问题
   * 修复脚本逻辑问题
   * 修复脚本逻辑问题
   * 修复脚本逻辑问题
   * 修复脚本逻辑问题
+  * 修正配置文件权限问题
+  * 修正配置文件权限问题
+  * 修正配置文件权限问题
 
- -- phak <phak@ubuntu22-cloud-init>  Sat, 21 Feb 2026 13:41:36 +0800
+ -- phak <phak@ubuntu22-cloud-init>  Sat, 21 Feb 2026 15:47:10 +0800
 
 local-proxy (0.1.0-1) unstable; urgency=medium
 
