@@ -102,8 +102,8 @@ fi
 sudo tee "$DOCKER_CONF"  > /dev/null <<EOF
 {
   "proxies": {
-      "http-proxy": "http://127.0.0.1:7897",
-      "https-proxy": "http://127.0.0.1:7897",
+      "http-proxy": "$PROXY_HTTP_URL",
+      "https-proxy": "$PROXY_HTTP_URL",
       "no-proxy": "localhost,127.0.0.1"
   }
 }

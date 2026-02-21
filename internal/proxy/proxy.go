@@ -1,6 +1,7 @@
 package proxy
 
 import (
+	"bufio"
 	"io"
 	"net"
 	"net/http"
@@ -8,12 +9,12 @@ import (
 )
 
 func GetUpstreamProxy() string {
-	configLock.RLock()
-	defer configLock.RUnlock()
-	if proxyConfig.Direct {
+	ConfigLock.RLock()
+	defer ConfigLock.RUnlock()
+	if ProxyConfig.Direct {
 		return ""
 	}
-	return "http://" + proxyConfig.TargetIP + ":" + proxyConfig.TargetPort
+	return "http://" + ProxyConfig.TargetIP + ":" + ProxyConfig.TargetPort
 }
 
 func HandleTunneling(w http.ResponseWriter, r *http.Request) {
@@ -28,8 +29,17 @@ func HandleTunneling(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusServiceUnavailable)
 			return
 		}
+
 		connectReq := "CONNECT " + r.Host + " HTTP/1.1\r\nHost: " + r.Host + "\r\n\r\n"
 		destConn.Write([]byte(connectReq))
+
+		br := bufio.NewReader(destConn)
+		for {
+			line, err := br.ReadString('\n')
+			if err != nil || line == "\r\n" {
+				break
+			}
+		}
 	} else {
 		destConn, err = net.Dial("tcp", r.Host)
 		if err != nil {

@@ -2,7 +2,7 @@
 package test
 
 import (
-	proxy "local_proxy/src"
+	"local_proxy/internal/proxy"
 	"testing"
 )
 
