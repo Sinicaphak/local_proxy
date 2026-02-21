@@ -20,10 +20,15 @@ jobs:
         run: |
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
+      - name: Show Current Directory
+        run: |
+          echo "Current Path: $(pwd)"
+          echo "github.workspace: ${{ github.workspace }}"
+          ls -F
+
       - name: Build with Docker Compose
         run: |
-          # 使用 --project-directory 强制指定根目录为上下文
-          docker compose -f pack_env/docker_compose.yml --project-directory . up --exit-code-from builder
+          docker compose -f pack_env/docker_compose.yml up --exit-code-from builder
           
       - name: Check output
         run: ls -l dist/
