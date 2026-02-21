@@ -22,8 +22,8 @@ jobs:
 
       - name: Build with Docker Compose
         run: |
-          # 启动编译服务
-          docker compose -f pack_env/docker_compose.yml up --exit-code-from builder
+          # 使用 --project-directory 强制指定根目录为上下文
+          docker compose -f pack_env/docker_compose.yml --project-directory . up --exit-code-from builder
           
       - name: Check output
         run: ls -l dist/

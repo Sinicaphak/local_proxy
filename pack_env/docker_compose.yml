@@ -6,6 +6,7 @@ services:
     working_dir: /home/tester/local_proxy
     command: >
       /bin/bash -c "
+        ls -R /home/tester/local_proxy && 
         sudo chown -R tester:tester /home/tester/local_proxy &&
         dpkg-buildpackage -us -uc -b &&
         mkdir -p dist &&
