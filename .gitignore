@@ -3,3 +3,4 @@ debian/local-proxy
 debian/debhelper-build-stamp
 debian/files
 bin
+pack_env/docker_compose.yml
