@@ -24,8 +24,8 @@ RUN useradd -m -s /bin/bash tester && \
     usermod -aG sudo tester && \
     echo "tester:tester" | chpasswd && \
     echo "tester ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+    RUN chown -R tester:tester /home/tester
 USER tester
-RUN sudo chown -R tester:tester /home/tester
 WORKDIR /home/tester/local_proxy
 # RUN dpkg-buildpackage -us -uc -b
 # dch -v 0.1.8-1 "修正配置文件权限问题"
