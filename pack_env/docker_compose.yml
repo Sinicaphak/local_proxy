@@ -2,7 +2,7 @@ services:
   builder:
     image: ghcr.io/sinicaphak/local_proxy:latest
     volumes:
-      - ..:/home/tester/local_proxy
+      - /home/runner/work/local_proxy/local_proxy:/home/tester/local_proxy
     working_dir: /home/tester/local_proxy
     command: >
       /bin/bash -c "
