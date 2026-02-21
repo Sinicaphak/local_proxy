@@ -8,47 +8,30 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: read
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
-      - name: Check path changes
-        id: filter
-        uses: dorny/paths-filter@v3
-        with:
-          filters: |
-            src:
-              - 'internal/proxy/**'
-              - 'cmd/local_proxy/**'
-              - 'debian/**'
-              - 'script/**'
-              - 'pack_env/Dockerfile'
-      
-      - name: Build inside Docker
-        if: steps.filter.outputs.src == 'true'
+      - name: Log in to GHCR
         run: |
-          docker build -t local-proxy-builder .
-          mkdir -p dist
-          docker run --rm -v $(pwd):/home/tester/local_proxy local-proxy-builder /bin/bash -c "
-            sudo chown -R tester:tester /home/tester/local_proxy &&
-            dpkg-buildpackage -us -uc -b &&
-            cp ../*.deb /home/tester/local_proxy/dist/
-          "
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-      - name: Upload Artifact
-        if: steps.filter.outputs.src == 'true'
-        uses: actions/upload-artifact@v4
-        with:
-          name: deb-packages
-          path: dist/*.deb
+      - name: Build with Docker Compose
+        run: |
+          # 启动编译服务
+          docker compose -f pack_env/docker_compose.yml up --exit-code-from builder
+          
+      - name: Check output
+        run: ls -l dist/
 
       - name: Release
-        if: steps.filter.outputs.src == 'true'
+        if: hashFiles('dist/*.deb') != ''
         uses: softprops/action-gh-release@v2
         with:
           files: dist/*.deb
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-

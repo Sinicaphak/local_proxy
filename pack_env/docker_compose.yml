@@ -1,0 +1,13 @@
+services:
+  builder:
+    image: ghcr.io/sinicaphak/local_proxy:latest
+    volumes:
+      - .:/home/tester/local_proxy
+    working_dir: /home/tester/local_proxy
+    command: >
+      /bin/bash -c "
+        sudo chown -R tester:tester /home/tester/local_proxy &&
+        dpkg-buildpackage -us -uc -b &&
+        mkdir -p dist &&
+        mv ../*.deb ./dist/
+      "
