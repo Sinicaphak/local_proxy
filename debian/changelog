@@ -1,0 +1,15 @@
+local-proxy (0.1.5-1) UNRELEASED; urgency=medium
+
+  * 修复脚本权限问题
+  * 修复脚本逻辑问题
+  * 修复脚本逻辑问题
+  * 修复脚本逻辑问题
+  * 修复脚本逻辑问题
+
+ -- phak <phak@ubuntu22-cloud-init>  Sat, 21 Feb 2026 13:41:36 +0800
+
+local-proxy (0.1.0-1) unstable; urgency=medium
+
+  * 初次发布，提供systemd和安装脚本集成。
+
+ -- phak <2967306689@qq.com>  Wed, 31 Dec 2026 00:00:00 +0800

@@ -1,0 +1,7 @@
+bin/local-proxy usr/bin/
+config/config.yaml etc/local-proxy/
+script/set_proxy.sh usr/lib/local-proxy/scripts/
+script/clear_proxy.sh usr/lib/local-proxy/scripts/
+debian/local-proxy.service lib/systemd/system/
+debian/local-proxy-set-proxy.service lib/systemd/system/
+debian/local-proxy-clear-proxy.service lib/systemd/system/

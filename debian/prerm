@@ -1,0 +1,17 @@
+#!/bin/sh
+set -e
+
+if [ "$1" = "remove" ] || [ "$1" = "deconfigure" ]; then
+    if [ -x /usr/lib/local-proxy/scripts/clear_proxy.sh ]; then
+        /usr/lib/local-proxy/scripts/clear_proxy.sh || true
+    fi
+    if command -v systemctl >/dev/null 2>&1; then
+        systemctl stop local-proxy.service 2>/dev/null || true
+        systemctl disable local-proxy.service 2>/dev/null || true
+        systemctl daemon-reload 2>/dev/null || true
+    fi
+fi
+
+#DEBHELPER#
+exit 0
+

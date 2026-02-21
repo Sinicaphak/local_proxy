@@ -1,0 +1,5 @@
+debian/.debhelper
+debian/local-proxy
+debian/debhelper-build-stamp
+debian/files
+bin

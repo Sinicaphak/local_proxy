@@ -1,0 +1,15 @@
+[Unit]
+Description=Local HTTP/HTTPS proxy service
+After=network.target
+
+[Service]
+Type=simple
+User=local-proxy
+Group=local-proxy
+WorkingDirectory=/var/lib/local-proxy
+ExecStart=/usr/bin/local-proxy -config /etc/local-proxy/config.yaml
+Restart=on-failure
+RestartSec=3s
+
+[Install]
+WantedBy=multi-user.target

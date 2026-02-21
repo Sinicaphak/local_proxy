@@ -1,0 +1,10 @@
+[Unit]
+Description=Run set_proxy.sh for local-proxy
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/lib/local-proxy/scripts/set_proxy.sh
+
+[Install]
+WantedBy=multi-user.target

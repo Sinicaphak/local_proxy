@@ -1,0 +1,26 @@
+#!/usr/bin/make -f
+
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+export DH_VERBOSE = 1
+export GO111MODULE=on
+
+%:
+	dh $@ --builddirectory=build
+
+override_dh_auto_build:
+	mkdir -p bin
+	GOFLAGS="${GOFLAGS}" go build -trimpath -o bin/local-proxy ./src
+
+override_dh_auto_install:
+	dh_auto_install --destdir=$(CURDIR)/debian/local-proxy
+	install -D -m0755 bin/local-proxy $(CURDIR)/debian/local-proxy/usr/bin/local-proxy
+
+override_dh_dwz:
+	# Go 二进制含压缩调试段，跳过 dwz
+	@echo "Skipping dh_dwz for Go binary"
+	true
+
+# Add execute permissions to the scripts
+override_dh_fixperms:
+	dh_fixperms
+	chmod +x debian/local-proxy/usr/lib/local-proxy/scripts/*.sh

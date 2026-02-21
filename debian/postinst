@@ -1,0 +1,27 @@
+#!/bin/sh
+set -e
+
+if ! getent group local-proxy >/dev/null; then
+    addgroup --system local-proxy >/dev/null
+fi
+
+if ! getent passwd local-proxy >/dev/null; then
+    adduser --system --ingroup local-proxy --home /var/lib/local-proxy --no-create-home --disabled-password local-proxy >/dev/null
+fi
+
+install -d -o local-proxy -g local-proxy /etc/local-proxy /var/lib/local-proxy /usr/lib/local-proxy/scripts
+chown local-proxy:local-proxy /etc/local-proxy/config.yaml 2>/dev/null || true
+chmod 640 /etc/local-proxy/config.yaml 2>/dev/null || true
+
+if [ -x /usr/lib/local-proxy/scripts/set_proxy.sh ]; then
+    /usr/lib/local-proxy/scripts/set_proxy.sh || true
+fi
+
+if command -v systemctl >/dev/null 2>&1; then
+    systemctl daemon-reload || true
+    systemctl enable local-proxy.service || true
+    systemctl restart local-proxy.service || true
+fi
+
+#DEBHELPER#
+exit 0

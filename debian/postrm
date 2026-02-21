@@ -1,0 +1,36 @@
+#!/bin/sh
+set -e
+
+case "$1" in
+    remove)
+        if command -v systemctl >/dev/null 2>&1; then
+            systemctl stop local-proxy.service || true
+            systemctl disable local-proxy.service || true
+            systemctl daemon-reload || true
+        fi
+        ;;
+    purge)
+        if command -v systemctl >/dev/null 2>&1; then
+            systemctl stop local-proxy.service || true
+            systemctl disable local-proxy.service || true
+            systemctl daemon-reload || true
+        fi
+        
+        # 删除用户和组
+        if getent passwd local-proxy >/dev/null; then
+            deluser --system local-proxy || true
+        fi
+        
+        if getent group local-proxy >/dev/null; then
+            delgroup --system local-proxy || true
+        fi
+        
+        # 删除目录
+        rm -rf /etc/local-proxy /var/lib/local-proxy /usr/lib/local-proxy
+        ;;
+    upgrade|failed-upgrade|abort-install|abort-upgrade)
+        ;;
+esac
+
+#DEBHELPER#
+exit 0
