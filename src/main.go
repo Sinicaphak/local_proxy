@@ -1,4 +1,4 @@
-package main
+package proxy
 
 import (
 	"flag"
@@ -24,7 +24,7 @@ func main() {
 	configPath := flag.String("config", "/etc/local-proxy/config.yaml", "配置文件路径")
 	flag.Parse()
 	LoadConfig(*configPath)
-	watchConfig(*configPath) // 启动文件监视
+	WatchConfig(*configPath) // 启动文件监视
 
 	addr := proxyConfig.SelfIP + ":" + proxyConfig.SelfPort
 	server := &http.Server{

@@ -1,4 +1,4 @@
-package main
+package proxy
 
 import (
 	"log/slog"
@@ -29,7 +29,7 @@ func LoadConfig(path string) {
 	slog.Info("配置已重新加载, 运行在" + mode + "模式")
 }
 
-func watchConfig(path string) {
+func WatchConfig(path string) {
 	go func() {
 		watcher, err := fsnotify.NewWatcher()
 		if err != nil {
