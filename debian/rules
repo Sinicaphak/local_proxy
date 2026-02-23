@@ -4,11 +4,8 @@ export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 export DH_VERBOSE = 1
 export GO111MODULE=on
 
-# 关键：获取 Debian 架构变量
-# DEB_TARGET_ARCH_CPU 会得到 amd64, arm64 等
 include /usr/share/dpkg/architecture.mk
 
-# 将 Debian 架构转换为 Go 的架构名称
 ifeq ($(DEB_TARGET_ARCH_CPU),amd64)
     GO_ARCH = amd64
 else ifeq ($(DEB_TARGET_ARCH_CPU),arm64)

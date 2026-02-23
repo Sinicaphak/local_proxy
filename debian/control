@@ -7,7 +7,7 @@ Standards-Version: 4.6.2
 Rules-Requires-Root: no
 
 Package: local-proxy
-Architecture: arm64 amd
+Architecture: arm64 amd64
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: 转发请求, 直连或转发到目标服务器
  这会更改你的terminal/docker/apt/git/rosdep/pip的代理

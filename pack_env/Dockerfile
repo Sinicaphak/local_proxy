@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y \
     wget \
     ca-certificates \
     sudo \
+    binutils-aarch64-linux-gnu \
     && rm -rf /var/lib/apt/lists/*
 
 # go >= 1.21 

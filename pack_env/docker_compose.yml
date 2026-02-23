@@ -9,11 +9,12 @@ services:
         ls -R /home/tester/local_proxy && 
         sudo chown -R tester:tester /home/tester/local_proxy &&
         for arch in amd64 arm64; do
-          echo '== Building for architecture: '$$arch' ==';
-          dpkg-buildpackage -us -uc -b -a$$arch;
-          debian/rules clean;
-        done;
-        
-        mkdir -p dist &&
+          echo "== Building for architecture: $arch =="
+          dpkg-buildpackage -us -uc -b -a${arch}
+          debian/rules clean
+        done
+
+        mkdir -p dist
         mv ../*.deb ./dist/
+        ls -l dist/
       "
