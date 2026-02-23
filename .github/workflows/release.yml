@@ -16,6 +16,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          path: /home/runner/work/local_proxy
 
       - name: Log in to GHCR
         run: |

@@ -2,19 +2,9 @@ services:
   builder:
     image: ghcr.io/sinicaphak/local_proxy:latest
     volumes:
-      - /home/runner/work/local_proxy/local_proxy:/home/tester/local_proxy
+      - ../:/home/tester/local_proxy
     working_dir: /home/tester/local_proxy
     command: >-
       /bin/bash -c '
-        ls -R /home/tester/local_proxy && 
-        sudo chown -R tester:tester /home/tester/local_proxy &&
-        for arch in amd64 arm64; do
-          echo "== Building for architecture: $arch =="
-          dpkg-buildpackage -us -uc -b -a${arch}
-          debian/rules clean
-        done
-
-        mkdir -p dist
-        mv ../*.deb ./dist/
-        ls -l dist/
+        findmnt /home/tester/local_proxy
       '
