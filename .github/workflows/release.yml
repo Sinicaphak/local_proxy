@@ -2,6 +2,8 @@ name: Build Pack, and Release
 
 on:
   push:
+    paths:
+      - '.github/workflows/release.yml'
     tags:
       - "v*"
   workflow_dispatch:
@@ -14,10 +16,15 @@ jobs:
       packages: read
 
     steps:
+      - name: Get Latest Tag
+        id: get_tag
+        run: |
+          latest_tag=$(git describe --tags --abbrev=0)
+          echo "Latest tag: $latest_tag"
+          echo "tag=$latest_tag" >> $GITHUB_ENV
+
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          path: /home/runner/work/local_proxy
 
       - name: Log in to GHCR
         run: |
@@ -41,5 +48,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: dist/*.deb
+          tag_name: ${{ env.tag }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
