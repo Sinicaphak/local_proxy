@@ -16,15 +16,15 @@ jobs:
       packages: read
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Get Latest Tag
         id: get_tag
         run: |
           latest_tag=$(git describe --tags --abbrev=0)
           echo "Latest tag: $latest_tag"
           echo "tag=$latest_tag" >> $GITHUB_ENV
-
-      - name: Checkout code
-        uses: actions/checkout@v4
 
       - name: Log in to GHCR
         run: |
