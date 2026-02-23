@@ -4,23 +4,35 @@ export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 export DH_VERBOSE = 1
 export GO111MODULE=on
 
+# 关键：获取 Debian 架构变量
+# DEB_TARGET_ARCH_CPU 会得到 amd64, arm64 等
+include /usr/share/dpkg/architecture.mk
+
+# 将 Debian 架构转换为 Go 的架构名称
+ifeq ($(DEB_TARGET_ARCH_CPU),amd64)
+    GO_ARCH = amd64
+else ifeq ($(DEB_TARGET_ARCH_CPU),arm64)
+    GO_ARCH = arm64
+else
+    GO_ARCH = $(DEB_TARGET_ARCH_CPU)
+endif
+
 %:
 	dh $@ --builddirectory=build
 
 override_dh_auto_build:
 	mkdir -p bin
-	GOFLAGS="" go build -trimpath -o bin/local-proxy ./cmd/local_proxy
+	GOOS=linux GOARCH=$(GO_ARCH) GOFLAGS="" \
+	go build -trimpath -o bin/local-proxy ./cmd/local_proxy
 
 override_dh_auto_install:
-	dh_auto_install --destdir=$(CURDIR)/debian/local-proxy
 	install -D -m0755 bin/local-proxy $(CURDIR)/debian/local-proxy/usr/bin/local-proxy
 
 override_dh_dwz:
-	# Go 二进制含压缩调试段，跳过 dwz
 	@echo "Skipping dh_dwz for Go binary"
-	true
 
-# Add execute permissions to the scripts
 override_dh_fixperms:
 	dh_fixperms
-	chmod +x debian/local-proxy/usr/lib/local-proxy/scripts/*.sh
+	if [ -d $(CURDIR)/debian/local-proxy/usr/lib/local-proxy/scripts ]; then \
+		chmod +x $(CURDIR)/debian/local-proxy/usr/lib/local-proxy/scripts/*.sh; \
+	fi
